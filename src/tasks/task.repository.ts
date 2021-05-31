@@ -1,3 +1,4 @@
+import { User } from 'src/auth/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
@@ -6,10 +7,12 @@ import { Task } from './task.entity';
 
 @EntityRepository(Task)
 export class TaskRepository extends Repository<Task> {
-  async getTask(filterDto: GetTasksFilterDto): Promise<Task[]> {
+  async getTask(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
     const { status, search } = filterDto;
     //createQueryBuilder method of Repository class
     const query = this.createQueryBuilder('task');
+    //user validation in entity Task
+    query.where({ user });
 
     if (status) {
       query.andWhere('task.status = :status', { status });
@@ -17,7 +20,7 @@ export class TaskRepository extends Repository<Task> {
 
     if (search) {
       query.andWhere(
-        'task.title LIKE :search OR task.description LIKE :search',
+        '(LOWER(task.title) LIKE LOWER(:search) OR (task.description) LIKE LOWER(:search))',
         { search: `%${search}%` },
       );
     }
@@ -26,14 +29,17 @@ export class TaskRepository extends Repository<Task> {
     return task;
   }
 
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+  async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
     const { title, description } = createTaskDto;
-    const task = new Task();
-    task.title = title;
-    task.description = description;
-    task.status = TaskStatus.OPEN;
-    await task.save();
 
+    const task = this.create({
+      title,
+      description,
+      status: TaskStatus.OPEN,
+      user,
+    });
+
+    await this.save(task);
     return task;
   }
 }
