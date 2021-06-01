@@ -8,6 +8,7 @@
 - TypeOrm + PostgreSQL
 - Module Authentication & Authorization(using Passport.js)
 - SignUp & SignIn with TokenJWT
+- Unit Test with Jest
 
 ## Running the app
 
