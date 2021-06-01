@@ -4,9 +4,9 @@
 
 ## NestJS App - Task Management
 
-- GetAllTask, GetTaskById, PostTask, PatchTaskStatus & DeleteTask
+- API: GetAllTask, GetTaskById, PostTask, PatchTaskStatus & DeleteTask
 - TypeOrm + PostgreSQL
-- Module Authentication & Authorization
+- Module Authentication & Authorization(using Passport.js)
 - SignUp & SignIn with TokenJWT
 
 ## Running the app
